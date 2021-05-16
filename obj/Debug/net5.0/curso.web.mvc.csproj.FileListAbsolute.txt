@@ -116,3 +116,4 @@ C:\Users\gabri\source\repos\curso.web.mvc\curso.web.mvc\bin\Debug\net5.0\runtime
 C:\Users\gabri\source\repos\curso.web.mvc\curso.web.mvc\bin\Debug\net5.0\runtimes\win-arm64\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
 C:\Users\gabri\source\repos\curso.web.mvc\curso.web.mvc\obj\Debug\net5.0\Razor\Views\Usuario\Cadastrar.cshtml.g.cs
 C:\Users\gabri\source\repos\curso.web.mvc\curso.web.mvc\obj\Debug\net5.0\Razor\Views\Usuario\Logar.cshtml.g.cs
+C:\Users\gabri\source\repos\curso.web.mvc\curso.web.mvc\obj\Debug\net5.0\Razor\Views\Curso\Cadastrar.cshtml.g.cs
