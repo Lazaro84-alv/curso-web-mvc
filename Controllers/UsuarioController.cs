@@ -3,11 +3,9 @@ using curso.web.mvc.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Refit;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -21,7 +19,7 @@ namespace curso.web.mvc.Controllers
 
         public UsuarioController(IUsuarioService usuarioService)
         {
-            usuarioService = usuarioService;
+             _usuarioService = usuarioService;
         }
 
         public IActionResult Cadastrar()
@@ -114,6 +112,20 @@ namespace curso.web.mvc.Controllers
             }
 
             return View();
+        }
+
+        public IActionResult EfetuarLogoff()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logoff()
+        {
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return RedirectToAction($"{nameof(Logar)}");
         }
     }
 }

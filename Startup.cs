@@ -52,7 +52,11 @@ namespace curso.web.mvc
                }).ConfigurePrimaryHttpMessageHandler(c => clientHandler);
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie();
+            .AddCookie(options => 
+            {
+                options.LoginPath = "/Usuario/Logar";
+                options.AccessDeniedPath = "/Usuario/Logar";
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
