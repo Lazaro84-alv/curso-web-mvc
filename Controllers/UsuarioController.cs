@@ -1,10 +1,14 @@
 ﻿using curso.web.mvc.Models.Usuarios;
 using curso.web.mvc.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Refit;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace curso.web.mvc.Controllers
@@ -80,6 +84,23 @@ namespace curso.web.mvc.Controllers
             try
             {
                 var usuario = await usuarioService.Logar(loginViewModelInput);
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, usuario.Usuario.Codigo.ToString()),
+                    new Claim(ClaimTypes.Name, usuario.Usuario.Login),
+                    new Claim(ClaimTypes.Email, usuario.Usuario.Email),
+                    new Claim("token", usuario.Token),
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var authProperties = new AuthenticationProperties
+                {
+                    ExpiresUtc = new DateTimeOffset(DateTime.UtcNow.AddDays(1))
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal());
 
                 ModelState.AddModelError("", $"O usuário está autenticado {usuario.Token}");
             }

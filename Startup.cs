@@ -1,4 +1,6 @@
+using curso.web.mvc.Handlers;
 using curso.web.mvc.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -23,13 +25,16 @@ namespace curso.web.mvc
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            var clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            services.AddHttpContextAccessor();
 
+            var clientHandler = new HttpClientHandler();
+            {
+                clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+
+            };
 
             services.AddRefitClient<IUsuarioService>()
                 .ConfigureHttpClient(c =>
@@ -37,14 +42,19 @@ namespace curso.web.mvc
                     c.BaseAddress = new Uri(Configuration.GetValue<string>("UrkApiCurso"));
                 }).ConfigurePrimaryHttpMessageHandler(c => clientHandler);
 
+            services.AddTransient<BearerTokenMessageHandler>();
+
             services.AddRefitClient<ICursoService>()
+                .AddHttpMessageHandler<BearerTokenMessageHandler>()
                .ConfigureHttpClient(c =>
                {
                    c.BaseAddress = new Uri(Configuration.GetValue<string>("UrkApiCurso"));
                }).ConfigurePrimaryHttpMessageHandler(c => clientHandler);
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -62,6 +72,7 @@ namespace curso.web.mvc
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

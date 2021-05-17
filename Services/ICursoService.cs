@@ -8,6 +8,7 @@ namespace curso.web.mvc.Services
     {
 
         [Post("/api/v1/cursos")]
+        [Headers("Authorization: Bearer")]
         Task<CadastrarCursoViewModelOutput> Registrar(CadastrarCursoViewModelInput cadastrarCursoViewModelInput);
     }
 }
