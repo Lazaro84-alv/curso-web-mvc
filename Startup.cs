@@ -1,12 +1,15 @@
+using curso.web.mvc.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Refit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace curso.web.mvc
@@ -24,6 +27,21 @@ namespace curso.web.mvc
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            var clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+
+
+            services.AddRefitClient<IUsuarioService>()
+                .ConfigureHttpClient(c =>
+                {
+                    c.BaseAddress = new Uri(Configuration.GetValue<string>("UrkApiCurso"));
+                }).ConfigurePrimaryHttpMessageHandler(c => clientHandler);
+
+            services.AddRefitClient<ICursoService>()
+               .ConfigureHttpClient(c =>
+               {
+                   c.BaseAddress = new Uri(Configuration.GetValue<string>("UrkApiCurso"));
+               }).ConfigurePrimaryHttpMessageHandler(c => clientHandler);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
