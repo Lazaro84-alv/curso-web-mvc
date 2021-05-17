@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace curso.web.mvc.Controllers
 {
+
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class CursoController : Controller
     {
 
@@ -23,6 +25,7 @@ namespace curso.web.mvc.Controllers
             return View();
         }
 
+        [Microsoft.AspNetCore.Authorization.Authorize]
         [HttpPost]
         public async Task<IActionResult> Cadastrar(CadastrarCursoViewModelInput cadastrarCursoViewModelInput)
         {
@@ -46,27 +49,9 @@ namespace curso.web.mvc.Controllers
 
         }
 
-        public IActionResult Listar()
+        public async Task<IActionResult> Listar()
         {
-            var cursos = new List<ListarCursoViewModelOutput>();
-
-            cursos.Add(new ListarCursoViewModelOutput()
-            {
-
-                Nome = "Curso A",
-                Descricao = "Descricao Curso A",
-                Login = "lazaroalves",
-
-            });
-
-            cursos.Add(new ListarCursoViewModelOutput()
-            {
-
-                Nome = "Curso B",
-                Descricao = "Descricao Curso B",
-                Login = "lazaroalves",
-
-            });
+            var cursos = await _cursoService.Obter();
 
             return View(cursos);
         }
